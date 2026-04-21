@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=4 
 
 ### LOG INFO ###
-#SBATCH --job-name=baseline_transformer-xxs-def_lr
-#SBATCH --output=logs/slurm/vid/baseline_transformer-xxs-def_lr%A-%a.log
-export RUN_NAME="baseline_transformer-xxs-def_lr"
+#SBATCH --job-name=baseline_transformer-xxs-def_lr=
+#SBATCH --output=logs/slurm/vid/baseline_transformer-xxs-def_lr=%A-%a.log
+export RUN_NAME="baseline_transformer-xxs-def_lr="
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"
@@ -20,7 +20,7 @@ lr=(0.0012)
 
 
 python train_model.py \
---run_name ${RUN_NAME}_${lr[${SLURM_ARRAY_TASK_ID}]} \
+--run_name ${RUN_NAME}${lr[${SLURM_ARRAY_TASK_ID}]} \
 --modality "VID" \
 --model_name ${MODEL_NAME} \
 --model_size ${MODEL_SIZE} \

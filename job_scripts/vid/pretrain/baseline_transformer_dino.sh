@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=4 
 
 ### LOG INFO ###
-#SBATCH --job-name=baseline_transformer-small-lr_
-#SBATCH --output=logs/slurm/vid/baseline_transformer-small-lr_%A-%a.log
-export RUN_NAME="baseline_transformer-small-lr_"
+#SBATCH --job-name=baseline_transformer-small-lr=
+#SBATCH --output=logs/slurm/vid/baseline_transformer-small-lr=%A-%a.log
+export RUN_NAME="baseline_transformer-small-lr="
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"

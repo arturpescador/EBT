@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=1 
 
 ### LOG INFO ###
-#SBATCH --job-name=ebt-medium-something_samples_4_min_4_steps_alpha_7.5k_langevin_1
-#SBATCH --output=logs/slurm/vid_inference/ebt-medium-something_samples_4_min_4_steps_alpha_7.5k_langevin_1%A-%a.log
-export RUN_NAME="ebt-medium-something_samples_4_min_4_steps_alpha_7.5k_langevin_1"
+#SBATCH --job-name=ebt-medium-something_samples=4_min=4_steps_alpha=7.5k_langevin=1
+#SBATCH --output=logs/slurm/vid_inference/ebt-medium-something_samples=4_min=4_steps_alpha=7.5k_langevin=1%A-%a.log
+export RUN_NAME="ebt-medium-something_samples=4_min=4_steps_alpha=7.5k_langevin=1"
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"

@@ -393,24 +393,19 @@ class ModelTrainer(L.LightningModule):
     def configure_optimizers_vid(self):
         if self.hparams.model_name == "ebt":
             alpha_param = self.model.alpha
-            encoder_params = list(self.model.image_encoder.parameters())
             other_params = [param for name, param in self.model.named_parameters() if not any(keyword in name for keyword in ['alpha', 'image_encoder'])]
             assert len(other_params) > 1, "Could not gather model params correctly please investigate"
-            
-            optimizer_parameters = [
-                {'params': alpha_param, 'weight_decay': 0.0, 'lr': self.hparams.mcmc_step_size_lr_multiplier*self.hparams.peak_learning_rate},  # No weight decay for alpha
-                {'params': encoder_params, 'weight_decay': 0.0, 'lr': 0.0},
-                {'params': other_params, 'weight_decay': self.hparams.weight_decay, 'lr': self.hparams.peak_learning_rate}  # Weight decay for other parameters
-            ]
-            return self.get_optimizer_scheduler_dict(optimizer_parameters)
-            
-        elif self.hparams.model_name == "baseline_transformer":
-            encoder_params = list(self.model.image_encoder.parameters())
-            other_params = [param for name, param in self.model.named_parameters() if not any(keyword in name for keyword in ['image_encoder'])]
 
             optimizer_parameters = [
-                {'params': encoder_params, 'weight_decay': 0, 'lr': 0},
-                {'params': other_params, 'weight_decay': self.hparams.weight_decay, 'lr': self.hparams.peak_learning_rate}  # Weight decay for other parameters
+                {'params': alpha_param, 'weight_decay': 0.0, 'lr': self.hparams.mcmc_step_size_lr_multiplier*self.hparams.peak_learning_rate},  # No weight decay for alpha
+                {'params': other_params, 'weight_decay': self.hparams.weight_decay, 'lr': self.hparams.peak_learning_rate}
+            ]
+            return self.get_optimizer_scheduler_dict(optimizer_parameters)
+
+        elif self.hparams.model_name == "baseline_transformer":
+            other_params = [param for name, param in self.model.named_parameters() if 'image_encoder' not in name]
+            optimizer_parameters = [
+                {'params': other_params, 'weight_decay': self.hparams.weight_decay, 'lr': self.hparams.peak_learning_rate}
             ]
             return self.get_optimizer_scheduler_dict(optimizer_parameters)
         
@@ -422,32 +417,18 @@ class ModelTrainer(L.LightningModule):
             alpha_param = self.model.alpha
             other_params = [param for name, param in self.model.named_parameters() if not any(keyword in name for keyword in ['alpha', 'image_encoder', 'text_encoder'])]
             assert len(other_params) > 1, "Could not gather model params correctly please investigate"
-            
-            optimizer_parameters = [
-                {'params': alpha_param, 'weight_decay': 0.0, 'lr': self.hparams.mcmc_step_size_lr_multiplier*self.hparams.peak_learning_rate},  # No weight decay for alpha
-                {'params': other_params, 'weight_decay': self.hparams.weight_decay, 'lr': self.hparams.peak_learning_rate} # Weight decay for other parameters
-            ]
-            
-            if self.hparams.image_task == "t2i": # do this bc other models wont have these 'sub' models
-                image_encoder_params = list(self.model.image_encoder.parameters())
-                optimizer_parameters.insert(1, {'params': image_encoder_params, 'weight_decay': 0, 'lr': 0})
-                text_encoder_params = list(self.model.text_encoder.parameters())
-                optimizer_parameters.insert(2, {'params': text_encoder_params, 'weight_decay': 0, 'lr': 0})
-            
-            return self.get_optimizer_scheduler_dict(optimizer_parameters)
-            
-        elif self.hparams.model_name == "dit":
-            other_params = [param for name, param in self.model.named_parameters() if not any(keyword in name for keyword in ['image_encoder', 'text_encoder'])]
 
             optimizer_parameters = [
-                {'params': other_params, 'weight_decay': self.hparams.weight_decay, 'lr': self.hparams.peak_learning_rate}  # Weight decay for other parameters
+                {'params': alpha_param, 'weight_decay': 0.0, 'lr': self.hparams.mcmc_step_size_lr_multiplier*self.hparams.peak_learning_rate},  # No weight decay for alpha
+                {'params': other_params, 'weight_decay': self.hparams.weight_decay, 'lr': self.hparams.peak_learning_rate}
             ]
-            if self.hparams.image_task == "t2i":
-                image_encoder_params = list(self.model.image_encoder.parameters())
-                optimizer_parameters.insert(0, {'params': image_encoder_params, 'weight_decay': 0, 'lr': 0})
-                text_encoder_params = list(self.model.text_encoder.parameters())
-                optimizer_parameters.insert(1, {'params': text_encoder_params, 'weight_decay': 0, 'lr': 0})
-            
+            return self.get_optimizer_scheduler_dict(optimizer_parameters)
+
+        elif self.hparams.model_name == "dit":
+            other_params = [param for name, param in self.model.named_parameters() if not any(keyword in name for keyword in ['image_encoder', 'text_encoder'])]
+            optimizer_parameters = [
+                {'params': other_params, 'weight_decay': self.hparams.weight_decay, 'lr': self.hparams.peak_learning_rate}
+            ]
             return self.get_optimizer_scheduler_dict(optimizer_parameters)
         
         else:

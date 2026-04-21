@@ -37,7 +37,7 @@ python train_model.py \
 --max_steps 1000000 \
 --warm_up_steps 10 \
 \
---dataset_name "pajama" \
+--dataset_name "fineweb" \
 --num_workers 12 \
 --validation_split_pct 0.0005 \
 \

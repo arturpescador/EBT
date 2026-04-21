@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=1
 
 ### LOG INFO ###
-#SBATCH --job-name=dit-large-dns_0.2_recurse_2_time
-#SBATCH --output=logs/slurm/img/dit-large-dns_0.2_recurse_2_time%A-%a.log
-export RUN_NAME="dit-large-dns_0.2_recurse_2_time"
+#SBATCH --job-name=dit-large-dns=0.2_recurse=2_time
+#SBATCH --output=logs/slurm/img/dit-large-dns=0.2_recurse=2_time%A-%a.log
+export RUN_NAME="dit-large-dns=0.2_recurse=2_time"
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"

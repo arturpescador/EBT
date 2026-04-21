@@ -19,8 +19,10 @@ class FineWebDataset(Dataset):
         self.tokenizer = AutoTokenizer.from_pretrained(hparams.tokenizer, clean_up_tokenization_spaces = False)
         self.tokenizer.pad_token_id = self.tokenizer.eos_token_id # just for reference the tokenizer is fast
 
+        # sample_name = "sample-350BT"
+        sample_name = "sample-100BT"
         if hparams.pretokenize_dataset:
-            save_path = os.path.join(dataset_dir, hparams.dataset_name + '_preprocessed', hparams.tokenizer.replace('/', '_'), "max_length_" + str(self.max_length))
+            save_path = os.path.join(dataset_dir, hparams.dataset_name + '_preprocessed', hparams.tokenizer.replace('/', '_'), f"{sample_name}", "max_length_" + str(self.max_length))
             print("pretokenized dataset save_path", save_path)
 
             if os.path.exists(save_path): # load dataset it exists
@@ -28,7 +30,7 @@ class FineWebDataset(Dataset):
                 self.dataset = load_from_disk(save_path)
             else: # need to create dataset
                 print(f"no pre-tokenized {hparams.dataset_name} dataset with correct settings, loading and saving")
-                self.dataset = load_dataset("HuggingFaceFW/fineweb", "sample-100BT", split = "train", cache_dir=dataset_dir, trust_remote_code=True, keep_in_memory = False)
+                self.dataset = load_dataset("HuggingFaceFW/fineweb", sample_name, split = "train", cache_dir=dataset_dir, trust_remote_code=True, keep_in_memory = False)
 
                 num_proc = hparams.num_workers * hparams.num_gpus
                 print("num_proc using for dataset map", num_proc) # found that if have 192 cpus then cannot use 96 (it freezes), so 48 was good. make sure to test this with your own hardware and adjust num workers accordingly
@@ -39,7 +41,7 @@ class FineWebDataset(Dataset):
                 print("done formatting dataset")
                 self.dataset.save_to_disk(save_path)
         else:
-            self.dataset = load_dataset("HuggingFaceFW/fineweb", "sample-100BT", split = "train", cache_dir=dataset_dir, trust_remote_code=True, keep_in_memory = False)
+            self.dataset = load_dataset("HuggingFaceFW/fineweb", sample_name, split = "train", cache_dir=dataset_dir, trust_remote_code=True, keep_in_memory = False)
 
         self.hparams = hparams
 

@@ -325,7 +325,13 @@ def init_whole_model_weights(model, weight_initialization_method, nonlinearity='
                     nn.init.constant_(m.bias, 0.)
             else:
                 raise ValueError(f"Unknown weight init method: {weight_initialization_method}")
-    
+        elif isinstance(m, nn.Embedding):
+            nn.init.normal_(m.weight, mean=0.0, std=0.02)
+            if weight_initialization_gain != 1.0:
+                m.weight.data *= weight_initialization_gain
+            if m.padding_idx is not None:
+                m.weight.data[m.padding_idx].zero_()
+
     model.apply(init_weights)
 
 

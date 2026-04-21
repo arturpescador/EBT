@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=1
 
 ### LOG INFO ###
-#SBATCH --job-name=dit-large-bs_128_100_steps_dns_0.1_ddpm_lr_ps_
-#SBATCH --output=logs/slurm/img/dit-large-bs_128_100_steps_dns_0.1_ddpm_lr_ps_%A-%a.log
-export RUN_NAME="dit-large-bs_128_100_steps_dns_0.1_ddpm_lr_ps_"
+#SBATCH --job-name=dit-large-bs=128_steps=100_dns=0.1_ddpm_lr=
+#SBATCH --output=logs/slurm/img/dit-large-bs=128_steps=100_dns=0.1_ddpm_lr=%A-%a.log
+export RUN_NAME="dit-large-bs=128_steps=100_dns=0.1_ddpm_lr="
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"
@@ -19,7 +19,7 @@ patch_size=(16)
 
 
 python train_model.py \
---run_name ${RUN_NAME}${lr[${SLURM_ARRAY_TASK_ID}]}_${patch_size[${SLURM_ARRAY_TASK_ID}]} \
+--run_name ${RUN_NAME}${lr[${SLURM_ARRAY_TASK_ID}]}_ps=${patch_size[${SLURM_ARRAY_TASK_ID}]} \
 --modality "IMG" \
 --model_name ${MODEL_NAME} \
 --model_size ${MODEL_SIZE} \

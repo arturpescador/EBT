@@ -33,6 +33,7 @@ def setup_wandb(args):
     if wandb.run is None:
         run = wandb.init(dir="logs/", name=f'{args.run_name}', entity=f'{args.wandb_entity}', project=f'{args.wandb_project}', mode = "offline" if args.wandb_offline else "online") # this is solely used to force wandb to start tracking stdout in logs
         wandb.define_metric("__init", hidden=True)
+        wandb.define_metric("*", step_metric="trainer/global_step") # default x axis is trainer/global_step
         return run
     return None
 
@@ -385,13 +386,21 @@ if __name__ == '__main__':
 
     parser.add_argument("--gaussian_random_noise_scaling", help="scales the std of the gaussian sampled from for random noise denoising_initial_condition. is mainly for NLP ebt model (not impl in other modalities for now)", type=float, default=1)
 
-    parser.add_argument("--clamp_futures_grad", help="clamps grad of predictions (used to be called futures when was doing AR). not used anymore but can help with stability", action="store_true", default=False)
+    parser.add_argument("--clamp_futures_grad", help="[no longer recommended]. clamps grad of predictions (used to be called futures when was doing AR). not used anymore but can help with stability", action="store_true", default=False)
 
-    parser.add_argument("--clamp_futures_grad_max_change", help="max total change during mcmc to clamp to (possibly divides by num mcmc steps), used by above. not used anymore", type=float, default=9.0)
+    parser.add_argument("--clamp_futures_grad_max_change", help="[no longer recommended]. max total change during mcmc to clamp to (possibly divides by num mcmc steps), used by above. not used anymore", type=float, default=9.0)
 
-    parser.add_argument("--absolute_clamp", help="clamps the absolute value of predicted_tokens to be within range [-val, val]. not used anymore", type=float, default=0.0)
+    parser.add_argument("--absolute_clamp", help="[no longer recommended]. clamps the absolute value of predicted_tokens to be within range [-val, val]. not used anymore", type=float, default=0.0)
 
-    parser.add_argument("--clamp_max_after_warm_up", help="clamps the absolute value of predicted_tokens to be within range [-val, val], after warming up. not used anymore", type=float, default=0.0)
+    parser.add_argument("--clamp_max_after_warm_up", help="[no longer recommended]. clamps the absolute value of predicted_tokens to be within range [-val, val], after warming up. not used anymore", type=float, default=0.0)
+
+    parser.add_argument("--norm_pred", help="applies RMSNorm to predictions between MCMC steps (analogous to inter-layer RMSNorm in transformers). only implemented for NLP EBT as of now", action="store_true", default=False)
+
+    parser.add_argument("--norm_pred_not_final_step", help="when norm_pred is enabled, skip the RMSNorm on the final MCMC step so the final logits used for loss are unnormalized", action="store_true", default=False)
+
+    parser.add_argument("--scale_alpha_with_energy", help="scales the MCMC step size alpha per-token by exp(energy / scale_alpha_with_energy_temp). only implemented for NLP EBT", action="store_true", default=False)
+
+    parser.add_argument("--scale_alpha_with_energy_temp", help="temperature multiplier applied to energy inside the exp when scale_alpha_with_energy is enabled. keep large to avoid blow up", type=float, default=9.0)
 
     parser.add_argument("--ebt_type", help="type of energy based transformer to use, inspired by DiT paper.", choices=["default", "time_embed", "adaln", "adaln_zero"], type=str, default="default")
 
@@ -472,7 +481,7 @@ if __name__ == '__main__':
 
     parser.add_argument("--embedding_dim", help="embedding dimension for transformers, if are using a model size this is automatically set", type=int, default=384)
 
-    parser.add_argument("--ffn_dim_multiplier", help="how much wider than the embedding dim the transformer FFN dim should be", type=float, default=None)
+    parser.add_argument("--ffn_dim_multiplier", help="how much wider than the embedding dim the transformer FFN dim should be", type=float, default=4.0)
 
     parser.add_argument("--override_embedding_dim", help="override the embedding dimension for a transformer. do not use unless you know what you are doing since it will likely cause issues and mess up scaling trends", type=int, default=0)
 
@@ -670,7 +679,7 @@ if __name__ == '__main__':
 
     parser.add_argument("--wandb_watch", help="turns on watch mode for wandb - expensive so only use for debugging", action="store_true", default=False) 
 
-    parser.add_argument("--wandb_watch_log_freq", help="number of steps to log for wandb watch. is higher since is a bit expensive", type = int, default=1000)  
+    parser.add_argument("--wandb_watch_log_freq", help="number of steps to log for wandb watch. is higher since is a bit expensive", type = int, default=5000)  
 
     #LOGGING##################################################################
 
@@ -694,7 +703,7 @@ if __name__ == '__main__':
 
     parser.add_argument("--checkpoint_monitor_mode", help="monitoring mode for checkpoint_monitor_string, either ['min', 'max']. if is loss do min, if is a metric like accuracy do max", type=str, default="min")
 
-    parser.add_argument("--save_top_k_ckpts", help="number of ckpts to save when doing val (saves the ones with best metrics using checkpoint monitor string and mode defined). -1 means save all", type=int, default=10)
+    parser.add_argument("--save_top_k_ckpts", help="number of ckpts to save when doing val (saves the ones with best metrics using checkpoint monitor string and mode defined). -1 means save all", type=int, default=2)
 
     #PRECISION#########################################################################
 

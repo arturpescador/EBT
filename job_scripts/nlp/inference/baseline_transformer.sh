@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=1
 
 ### LOG INFO ###
-#SBATCH --job-name=baseline_transformer-xxs-baseline_996k_bf_1_gen
-#SBATCH --output=logs/slurm/nlp_inference/baseline_transformer-xxs-baseline_996k_bf_1_gen%A-%a.log
-export RUN_NAME="baseline_transformer-xxs-baseline_996k_bf_1_gen"
+#SBATCH --job-name=baseline_transformer-xxs-baseline=996k_bf=1_gen
+#SBATCH --output=logs/slurm/nlp_inference/baseline_transformer-xxs-baseline=996k_bf=1_gen%A-%a.log
+export RUN_NAME="baseline_transformer-xxs-baseline=996k_bf=1_gen"
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"

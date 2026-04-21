@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=4
 
 ### LOG INFO ###
-#SBATCH --job-name=ebt-xxs-bs_256_s1_lr_
-#SBATCH --output=logs/slurm/nlp/ebt-xxs-bs_256_s1_lr_%A-%a.log
-export RUN_NAME="ebt-xxs-bs_256_s1_lr_"
+#SBATCH --job-name=ebt-xxs-bs=256_alpha=0.5_s1_lr=
+#SBATCH --output=logs/slurm/nlp/ebt-xxs-bs=256_alpha=0.5_s1_lr=%A-%a.log
+export RUN_NAME="ebt-xxs-bs=256_alpha=0.5_s1_lr="
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"
@@ -15,8 +15,8 @@ mkdir -p logs/slurm/nlp/
 module purge
 
 lr=(0.0012)
-alpha=(500)
-alpha_lr=(1500)
+alpha=(0.5)
+alpha_lr=(1.5)
 
 python train_model.py \
 --run_name ${RUN_NAME}${lr[${SLURM_ARRAY_TASK_ID}]} \
@@ -50,7 +50,7 @@ python train_model.py \
 --max_scheduling_steps 1000000 \
 --warm_up_steps 10000 \
 \
---dataset_name "pajama" \
+--dataset_name "fineweb" \
 --num_workers 12 \
 --validation_split_pct 0.0005 \
 --val_check_interval 15000 \

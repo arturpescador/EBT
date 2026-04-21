@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=1
 
 ### LOG INFO ###
-#SBATCH --job-name=ebt-xxs-s2_no_replay_coco_med_bs_256_pix_128_rand_4_lngvn_3_lr_ps_
-#SBATCH --output=logs/slurm/img/ebt-xxs-s2_no_replay_coco_med_bs_256_pix_128_rand_4_lngvn_3_lr_ps_%A-%a.log
-export RUN_NAME="ebt-xxs-s2_no_replay_coco_med_bs_256_pix_128_rand_4_lngvn_3_lr_ps_"
+#SBATCH --job-name=ebt-xxs-s2_no_replay_coco_med_bs=256_pix=128_rand=4_lngvn=3_lr=
+#SBATCH --output=logs/slurm/img/ebt-xxs-s2_no_replay_coco_med_bs=256_pix=128_rand=4_lngvn=3_lr=%A-%a.log
+export RUN_NAME="ebt-xxs-s2_no_replay_coco_med_bs=256_pix=128_rand=4_lngvn=3_lr="
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"
@@ -22,7 +22,7 @@ alpha=(3000)
 alpha_lr=(9000)
 
 python train_model.py \
---run_name ${RUN_NAME}${lr[${SLURM_ARRAY_TASK_ID}]}_${patch_size[${SLURM_ARRAY_TASK_ID}]}_${alpha[${SLURM_ARRAY_TASK_ID}]} \
+--run_name ${RUN_NAME}${lr[${SLURM_ARRAY_TASK_ID}]}_ps=${patch_size[${SLURM_ARRAY_TASK_ID}]}_alpha=${alpha[${SLURM_ARRAY_TASK_ID}]} \
 --modality "IMG" \
 --model_name ${MODEL_NAME} \
 --model_size ${MODEL_SIZE} \

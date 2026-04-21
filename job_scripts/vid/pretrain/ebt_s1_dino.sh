@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=4 
 
 ### LOG INFO ###
-#SBATCH --job-name=ebt-xl-time_embed_2_mcmc_lr_alpha_
-#SBATCH --output=logs/slurm/vid/ebt-xl-time_embed_2_mcmc_lr_alpha_%A-%a.log
-export RUN_NAME="ebt-xl-time_embed_2_mcmc_lr_alpha_"
+#SBATCH --job-name=ebt-xl-time_embed_mcmc=2_lr=
+#SBATCH --output=logs/slurm/vid/ebt-xl-time_embed_mcmc=2_lr=%A-%a.log
+export RUN_NAME="ebt-xl-time_embed_mcmc=2_lr="
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"
@@ -19,7 +19,7 @@ alpha=(30000)
 alpha_lr=(90000)
 
 python train_model.py \
---run_name ${RUN_NAME}${lr[${SLURM_ARRAY_TASK_ID}]}_${alpha[${SLURM_ARRAY_TASK_ID}]} \
+--run_name ${RUN_NAME}${lr[${SLURM_ARRAY_TASK_ID}]}_alpha=${alpha[${SLURM_ARRAY_TASK_ID}]} \
 --modality "VID" \
 --model_name ${MODEL_NAME} \
 --model_size ${MODEL_SIZE} \

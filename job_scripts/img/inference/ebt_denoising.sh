@@ -5,9 +5,9 @@
 #SBATCH --gpus-per-node=1
 
 ### LOG INFO ###
-#SBATCH --job-name=ebt-large-dns_0.2_no_rand_adv_2_steps
-#SBATCH --output=logs/slurm/img/ebt-large-dns_0.2_no_rand_adv_2_steps%A-%a.log
-export RUN_NAME="ebt-large-dns_0.2_no_rand_adv_2_steps"
+#SBATCH --job-name=ebt-large-dns=0.2_no_rand_adv_steps=2
+#SBATCH --output=logs/slurm/img/ebt-large-dns=0.2_no_rand_adv_steps=2%A-%a.log
+export RUN_NAME="ebt-large-dns=0.2_no_rand_adv_steps=2"
 # NOTE ctrl d ALL THREE of above to modify job-name, output, and RUN_NAME (which should all be the same)
 export MODEL_NAME="${RUN_NAME%%-*}"
 export MODEL_SIZE="${RUN_NAME#*-}"; export MODEL_SIZE="${MODEL_SIZE%%-*}"
